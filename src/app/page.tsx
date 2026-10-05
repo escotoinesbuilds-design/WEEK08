@@ -121,13 +121,11 @@ export default function Home() {
                     <p>Este análisis no determina fraude ni identifica personas u organizaciones.</p>
                   </div>
                   <div className="human-review">
-                    <h3>Revisión humana · Simulada</h3>
-                    <p>Elige un resultado de demostración. En un caso real, una persona revisora tendría que tomar esta decisión.</p>
-                    <button className="decision-button" type="button" onClick={() => setStatus("Patrón confirmado")}>
-                      Patrón confirmado
-                    </button>
-                    <button className="decision-button" type="button" onClick={() => setStatus("Evidencia insuficiente")}>
-                      Evidencia insuficiente
+                    <h3>Esperando revisión humana</h3>
+                    <p>Una persona capacitada revisará el caso. Tú no tienes que decidir si es fraude.</p>
+                    <p>Para esta demostración, el siguiente resultado será una simulación de esa revisión humana.</p>
+                    <button className="decision-button" type="button" onClick={() => setStatus(Math.random() < 0.5 ? "Patrón confirmado" : "Evidencia insuficiente")}>
+                      Ver resultado simulado
                     </button>
                   </div>
                 </div>
@@ -136,7 +134,7 @@ export default function Home() {
                 <div className="final-result" aria-live="polite">
                   <span>RESULTADO · SIMULADO</span>
                   <strong>{status}</strong>
-                  <p>Este resultado es ficticio y no confirma hechos sobre ninguna persona u organización.</p>
+                  <p>Resultado de una revisión humana simulada; no es una decisión tuya ni de la IA y no confirma hechos sobre ninguna persona u organización.</p>
                 </div>
               )}
               <button className="secondary-button" type="button" onClick={resetForm}>Hacer otro reporte</button>
