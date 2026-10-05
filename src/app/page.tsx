@@ -22,6 +22,7 @@ export default function Home() {
 
   function submitReport(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const trimmedEvidence = evidence.trim();
     if (evidence.trim().length === 0 && !(kind === "Captura" && screenshot)) {
       setError("Agrega la evidencia antes de reportar.");
       return;
@@ -33,6 +34,25 @@ export default function Home() {
     if (kind === "Captura" && !screenshot) {
       setError("Selecciona una captura para continuar.");
       return;
+    }
+    if (kind === "URL") {
+      try {
+        const parsedUrl = new URL(trimmedEvidence);
+        if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+          setError("Usa una dirección web que empiece con http:// o https://.");
+          return;
+        }
+      } catch {
+        setError("Escribe una dirección web válida, por ejemplo https://sitio.mx.");
+        return;
+      }
+    }
+    if (kind === "Número") {
+      const digits = trimmedEvidence.replace(/\D/g, "");
+      if (!/^[\d+().\s-]+$/.test(trimmedEvidence) || digits.length < 7 || digits.length > 18) {
+        setError("Escribe un número con entre 7 y 18 dígitos.");
+        return;
+      }
     }
     const suffix = Math.floor(100000 + Math.random() * 900000);
     setReportId(`MX-SIM-${new Date().getFullYear()}-${suffix}`);
