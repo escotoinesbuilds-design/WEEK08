@@ -3,6 +3,7 @@
 import { useRef, useState, type FormEvent } from "react";
 
 type EvidenceKind = "Mensaje" | "Captura" | "URL" | "Número";
+type ReportStatus = "Reportado" | "En revisión" | "Patrón confirmado" | "Evidencia insuficiente";
 const kinds: { name: EvidenceKind; mark: string }[] = [
   { name: "Mensaje", mark: "Aa" },
   { name: "Captura", mark: "IMG" },
@@ -16,6 +17,7 @@ export default function Home() {
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [reportId, setReportId] = useState("");
+  const [status, setStatus] = useState<ReportStatus>("Reportado");
   const fileInput = useRef<HTMLInputElement>(null);
 
   function submitReport(event: FormEvent<HTMLFormElement>) {
@@ -34,6 +36,7 @@ export default function Home() {
     }
     const suffix = Math.floor(100000 + Math.random() * 900000);
     setReportId(`MX-SIM-${new Date().getFullYear()}-${suffix}`);
+    setStatus("Reportado");
     setError("");
   }
 
@@ -42,6 +45,7 @@ export default function Home() {
     setEvidence("");
     setScreenshot(null);
     setError("");
+    setStatus("Reportado");
     if (fileInput.current) fileInput.current.value = "";
   }
 
@@ -74,7 +78,7 @@ export default function Home() {
                 <span>FOLIO DE DEMOSTRACIÓN · SIMULADO</span>
                 <strong>{reportId}</strong>
               </div>
-              <p className="status"><span aria-hidden="true" /> Estado: <strong>Reportado</strong></p>
+              <p className="status"><span aria-hidden="true" /> Estado: <strong>{status}</strong></p>
               <div className="guidance">
                 <h3>Mientras tanto, cuídate</h3>
                 <ul>
@@ -83,6 +87,38 @@ export default function Home() {
                   <li>No compartas información personal o bancaria.</li>
                 </ul>
               </div>
+              {status === "Reportado" && (
+                <button className="secondary-button" type="button" onClick={() => setStatus("En revisión")}>
+                  Iniciar revisión simulada
+                </button>
+              )}
+              {status === "En revisión" && (
+                <div className="review-flow" aria-live="polite">
+                  <div className="simulated-analysis">
+                    <h3>Análisis · Simulado</h3>
+                    <p><strong>Evidencia organizada:</strong> tipo {kind.toLowerCase()}, {evidence.trim().length} caracteres de texto y {screenshot ? "una captura adjunta" : "sin captura adjunta"}.</p>
+                    <p><strong>Comprobación de indicadores:</strong> simulada, sin consulta a fuentes externas.</p>
+                    <p>Este análisis no determina fraude ni identifica personas u organizaciones.</p>
+                  </div>
+                  <div className="human-review">
+                    <h3>Revisión humana · Simulada</h3>
+                    <p>Elige un resultado de demostración. En un caso real, una persona revisora tendría que tomar esta decisión.</p>
+                    <button className="decision-button" type="button" onClick={() => setStatus("Patrón confirmado")}>
+                      Patrón confirmado
+                    </button>
+                    <button className="decision-button" type="button" onClick={() => setStatus("Evidencia insuficiente")}>
+                      Evidencia insuficiente
+                    </button>
+                  </div>
+                </div>
+              )}
+              {(status === "Patrón confirmado" || status === "Evidencia insuficiente") && (
+                <div className="final-result" aria-live="polite">
+                  <span>RESULTADO · SIMULADO</span>
+                  <strong>{status}</strong>
+                  <p>Este resultado es ficticio y no confirma hechos sobre ninguna persona u organización.</p>
+                </div>
+              )}
               <button className="secondary-button" type="button" onClick={resetForm}>Hacer otro reporte</button>
             </div>
           ) : (
